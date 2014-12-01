@@ -1,8 +1,7 @@
 import Network
 import System.IO
-import Text.Printf
-import Data.List
-import Control.Monad
+
+import Irc.Base
 
 server = "irc.afternet.org"
 port = 6667
@@ -17,48 +16,4 @@ main = do
     waitForMOTD handle
     write handle "JOIN" chan
     listen handle
-
-untilM :: Monad m => m Bool -> m ()
-untilM m = do done <- m; if done then return () else untilM m
-
-write :: Handle -> String -> String -> IO ()
-write handle command args = do
-    hPrintf handle "%s %s\r\n" command args
-    printf "-> %s %s\n" command args
-
-listen :: Handle -> IO ()
-listen handle = forever $ do
-    line <- hGetLine handle
-    printf "<- %s\n" line
-
-    handlePong handle line
-
-    handleCommands handle (words line)
-
-handlePong :: Handle -> String -> IO ()
-handlePong handle line = do
-    if (words line !! 0 == "PING")
-      then write handle "PONG" (words line !! 1)
-      else return ()
-
-handleCommands :: Handle -> [String] -> IO ()
-handleCommands handle (ident:irccmd:chan:command:message) =
-    printf "ident: %s, irccmd: %s, chan: %s, command: %s, message: %s\n" ident irccmd chan command (unwords message)
-
-handleCommands handle (_) =
-    printf "problems."
-
-waitForMOTD :: Handle -> IO ()
-waitForMOTD handle = untilM $ do
-    line <- hGetLine handle
-    printf "<- (Awaiting MOTD) %s\n" line
-
-    handlePong handle line
-    if (words line !! 1 == "376")
-        then do
-            putStrLn "MOTD RECEIVED"
-            return True
-        else do
-            return False
-
 
