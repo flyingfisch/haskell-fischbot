@@ -15,6 +15,7 @@ main = do
     write handle "NICK" nick
     write handle "USER" (nick ++ " 0 * :haskell-fischbot")
     waitForMOTD handle
+    write handle "JOIN" chan
     listen handle
 
 untilM :: Monad m => m Bool -> m ()
@@ -32,11 +33,20 @@ listen handle = forever $ do
 
     handlePong handle line
 
+    handleCommands handle (words line)
+
 handlePong :: Handle -> String -> IO ()
 handlePong handle line = do
     if (words line !! 0 == "PING")
       then write handle "PONG" (words line !! 1)
       else return ()
+
+handleCommands :: Handle -> [String] -> IO ()
+handleCommands handle (ident:irccmd:chan:command:message) =
+    printf "ident: %s, irccmd: %s, chan: %s, command: %s, message: %s\n" ident irccmd chan command (unwords message)
+
+handleCommands handle (_) =
+    printf "problems."
 
 waitForMOTD :: Handle -> IO ()
 waitForMOTD handle = untilM $ do
