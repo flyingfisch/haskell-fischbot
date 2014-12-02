@@ -10,8 +10,12 @@ import Text.Printf
 
 import Irc.Write
 
-commandSet = [(":test", test)]
-
+-- Command set list and function to handle commands
+commandSet =
+    [
+        (":test", test),
+        (":!say", say)
+    ]
 
 handleCommands :: Handle -> [String] -> IO ()
 handleCommands handle (ident:irccmd:chan:command:message) = do
@@ -19,6 +23,9 @@ handleCommands handle (ident:irccmd:chan:command:message) = do
                                         (_) -> return ()
 handleCommands handle (_) = return ()
 
+-- Commands
 test :: Handle -> String -> String -> IO ()
 test handle chan _ = writeToChan handle chan "Test received."
 
+say :: Handle -> String -> String -> IO ()
+say handle chan message = writeToChan handle chan message
