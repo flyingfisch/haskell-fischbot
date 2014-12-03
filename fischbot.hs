@@ -1,3 +1,4 @@
+import Control.Exception
 import Control.Monad
 import Control.Monad.Reader
 import Data.List
@@ -15,9 +16,11 @@ port = 6667
 chan = "#fischbot"
 nick = "hFischbot"
 
-main = do
-    fischbotGlobals <- connect
-    runReaderT run fischbotGlobals
+main :: IO ()
+main = bracket connect disconnect loop
+    where
+    disconnect = hClose . socket
+    loop st = runReaderT run st
 
 connect :: IO Bot
 connect = do
@@ -32,25 +35,35 @@ run = do
 
     asks socket >>= motdHandler
 
+    write "JOIN" chan
+    asks socket >>= listen
+
+    return ()
+
 motdHandler :: Handle -> Net ()
-motdHandler handle = untilM $ do
-    line <- hGetLine handle
-    printf "<- (Awaiting MOTD) %s\n" line
+motdHandler handle = do
+    line <- io $ hGetLine handle
+    io $ printf "<- (Awaiting MOTD) %s\n" line
 
-    return True
+    pongHandler handle line
 
+    if (words line !! 1 == "376")
+      then do
+          io $ putStrLn "MOTD RECEIVED"
+          return ()
+      else do
+          motdHandler handle
+
+listen :: Handle -> Net ()
+listen handle = do
+    line <- io (hGetContents handle)
+    io $ putStrLn line
 
 pongHandler :: Handle -> String -> Net ()
 pongHandler handle line = do
     if words line  !! 0 == "PING"
       then write "PONG" (words line !! 1)
       else return ()
-
-listen :: Net ()
-listen = do
-    handle <- asks socket
-    line <- io (hGetContents handle)
-    io $ putStrLn line
 
 write :: String -> String -> Net ()
 write command arg = do
@@ -60,6 +73,3 @@ write command arg = do
 
 io :: IO a -> Net a
 io = liftIO
-
-untilM :: Monad m => m Bool -> m ()
-untilM m = do done <- m; if done then return () else untilM m
