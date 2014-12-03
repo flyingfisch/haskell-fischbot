@@ -1,6 +1,7 @@
 module Irc.Write
 ( write
 , writeToChan
+, writeToChanMe
 ) where
 
 import Control.Monad
@@ -17,3 +18,5 @@ write handle command args = do
 writeToChan :: Handle -> String -> String -> IO ()
 writeToChan handle chan message = write handle ("PRIVMSG " ++ chan) (':':message)
 
+writeToChanMe :: Handle -> String -> String -> IO ()
+writeToChanMe handle chan message = write handle ("PRIVMSG " ++ chan) (":\SOHACTION " ++ message ++ "\SOH")

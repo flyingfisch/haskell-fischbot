@@ -11,10 +11,10 @@ import Text.Printf
 import Irc.Write
 
 -- version
-version = "0.1b"
+versionString = "0.1b"
 
 -- Command set list and function to handle commands
-commandSet :: [(String, Handle -> String -> String -> IO ())]
+commandSet :: [(String, Handle -> String -> String -> [String] -> IO ())]
 commandSet =
     [
         (":!info", info),
@@ -23,27 +23,31 @@ commandSet =
         (":!intro", intro),
         (":test", test),
         (":!say", say),
-        (":!version", sendVersion)
+        (":!slap", slap),
+        (":!version", version)
     ]
 
 handleCommands :: Handle -> [String] -> IO ()
 handleCommands handle (ident:irccmd:chan:command:message) = do
-    case (lookup command commandSet) of (Just action) -> action handle chan (unwords message)
+    case (lookup command commandSet) of (Just action) -> action handle chan (unwords message) [ident, irccmd]
                                         (_) -> return ()
 handleCommands handle (_) = return ()
 
 -- Commands
-test handle chan _ = writeToChan handle chan "Test received."
+intro handle chan "" _ = writeToChan handle chan "You didn't tell me who to introduce!"
+intro handle chan name _ = writeToChan handle chan (name ++ ", You should introduce yourself: http://community.casiocalc.org/topic/5677-introduce-yourself")
 
-say handle chan message = writeToChan handle chan message
+info handle chan _ _ = writeToChan handle chan "Hello. My name is fischbot. I am just like the other fischbot you all know and love, except I am written in Haskell. Flyingfisch is my author, and you can obtain help by typing !help"
 
-intro handle chan "" = writeToChan handle chan "You didn't tell me who to introduce!"
-intro handle chan name = writeToChan handle chan (name ++ ", You should introduce yourself: http://community.casiocalc.org/topic/5677-introduce-yourself")
+infoBugs handle chan _ _ = writeToChan handle chan "You can report bugs on my GitHub page: https://github.com/flyingfisch/haskell-fischbot/issues"
 
-info handle chan _ = writeToChan handle chan "Hello. My name is fischbot. I am just like the other fischbot you all know and love, except I am written in Haskell. Flyingfisch is my author, and you can obtain help by typing !help"
+infoContrib handle chan _ _ = writeToChan handle chan "You can fork me on GitHub: https://github.com/flyingfisch/haskell-fischbot"
 
-infoBugs handle chan _ = writeToChan handle chan "You can report bugs on my GitHub page: https://github.com/flyingfisch/haskell-fischbot/issues"
+say handle chan message _ = writeToChan handle chan message
 
-infoContrib handle chan _ = writeToChan handle chan "You can fork me on GitHub: https://github.com/flyingfisch/haskell-fischbot"
+slap handle chan "" _ = writeToChan handle chan "Who shall I slap?"
+slap handle chan name _ = writeToChanMe handle chan ("slaps " ++ name ++ " around with a large fisch.")
 
-sendVersion handle chan _ = writeToChan handle chan version
+test handle chan _ _ = writeToChan handle chan "Test received."
+
+version handle chan _ _ = writeToChan handle chan ("Haskell-Fischbot version: " ++ versionString)
