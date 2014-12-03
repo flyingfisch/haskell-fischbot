@@ -6,24 +6,17 @@ import Network
 import System.IO
 import System.Environment
 
+import App.Data
 import Irc.Write
 import Irc.Listen
 
-type Net = ReaderT Bot IO
-data Bot = Bot { socket :: Handle }
-
-
-server = "irc.afternet.org"
-port = 6667
-chan = "#fischbot"
-nick = "hFischbot"
 
 main = do
     --args <- getArgs
     --handleArgs args
     fischbotGlobals <- connect
 
-    runReaderT sendNick fischbotGlobals
+    runReaderT (sendNick) fischbotGlobals
 
 {-    waitForMOTD handle
 
@@ -39,8 +32,8 @@ connect = do
     hSetBuffering handle NoBuffering
     return $ Bot handle
 
-sendNick :: Handle -> IO ()
-sendNick handle = do
+sendNick :: IO ()
+sendNick = do
     write "NICK" nick
     write "USER" (nick ++ " 0 * :haskell-fischbot")
 

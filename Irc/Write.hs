@@ -11,6 +11,8 @@ import Network
 import System.IO
 import Text.Printf
 
+import App.Data
+
 write :: Handle -> String -> String -> IO ()
 write command args = do
     handle <- asks socket
