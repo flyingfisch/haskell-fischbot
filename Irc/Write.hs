@@ -5,13 +5,15 @@ module Irc.Write
 ) where
 
 import Control.Monad
+import Control.Monad.Reader
 import Data.List
 import Network
 import System.IO
 import Text.Printf
 
 write :: Handle -> String -> String -> IO ()
-write handle command args = do
+write command args = do
+    handle <- asks socket
     hPrintf handle "%s %s\r\n" command args
     printf "-> %s %s\n" command args
 
