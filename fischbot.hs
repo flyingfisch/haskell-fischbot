@@ -16,14 +16,14 @@ main = do
     --handleArgs args
     fischbotGlobals <- connect
 
-    runReaderT (sendNick) fischbotGlobals
+    runReaderT sendNick fischbotGlobals
 
-{-    waitForMOTD handle
+    runReaderT waitForMOTD fischbotGlobals
 
-    write handle "JOIN" chan
+    runReaderT join fischbotGlobals
 
-    listen handle
--}
+    runReaderT listen fischbotGlobals
+
 
 connect :: IO Bot
 connect = do
@@ -36,6 +36,10 @@ sendNick :: IO ()
 sendNick = do
     write "NICK" nick
     write "USER" (nick ++ " 0 * :haskell-fischbot")
+
+join :: IO ()
+join = do
+    write "JOIN" chan
 
 
 --handleArgs :: [String] -> [String]

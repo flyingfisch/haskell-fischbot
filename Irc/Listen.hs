@@ -4,28 +4,32 @@ module Irc.Listen
 ) where
 
 import Control.Monad
+import Control.Monad.Reader
 import Data.List
 import Network
 import System.IO
 import Text.Printf
 
+import App.Data
 import Irc.Commands
 import Irc.Write
 
 untilM :: Monad m => m Bool -> m ()
 untilM m = do done <- m; if done then return () else untilM m
 
-listen :: Handle -> IO ()
-listen handle = forever $ do
+listen :: IO ()
+listen = forever $ do
+    handle <- asks socket
     line <- hGetLine handle
     printf "<- %s\n" line
 
     handlePong handle line
 
-    handleCommands handle (words line)
+    liftIO $ handleCommands (words line)
 
-waitForMOTD :: Handle -> IO ()
-waitForMOTD handle = untilM $ do
+waitForMOTD :: Net ()
+waitForMOTD = untilM $ do
+    handle <- asks socket
     line <- hGetLine handle
     printf "<- (Awaiting MOTD) %s\n" line
 
@@ -37,9 +41,9 @@ waitForMOTD handle = untilM $ do
         else do
             return False
 
-handlePong :: Handle -> String -> IO ()
+handlePong :: Handle -> String -> Net ()
 handlePong handle line = do
     if (words line !! 0 == "PING")
-      then write handle "PONG" (words line !! 1)
-      else return ()
+      then liftIO $ write "PONG" (words line !! 1)
+      else liftIO $ return ()
 

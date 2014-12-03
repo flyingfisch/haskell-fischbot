@@ -1,6 +1,7 @@
 module App.Data
 ( Net
 , Bot
+, socket
 , server
 , port
 , chan
