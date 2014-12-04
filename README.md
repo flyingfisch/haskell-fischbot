@@ -6,13 +6,18 @@ Fischbot ported to Haskell
 Running fischbot
 ----------------
 
-You should be able to run fischbot by running the following commands in terminal:
+If you are running Ubuntu (possibly other distros work as well, not tested), you should be able to run fischbot by running the following commands in terminal:
 
 ~~~
 $ git clone https://github.com/flyingfisch/haskell-fischbot
 $ cd haskell-fischbot
 $ ./fischbot
 ~~~
+
+Join `#fischbot` on `irc.afternet.org` and you should see the bot
+running happily. Try running `fischbot --help` for information on
+getting it to join other networks and channels.
+
 
 Compiling fischbot
 ------------------
