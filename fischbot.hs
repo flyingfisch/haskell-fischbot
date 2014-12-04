@@ -62,7 +62,7 @@ run = do
 
     -- listen, and remember we still need to send that handle!
     handle <- asks socket
-    listen handle [""]
+    listen handle [("", "")]
 
     -- make the result Net ()
     return ()

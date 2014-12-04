@@ -8,6 +8,7 @@ import Network
 import System.IO
 import Text.Printf
 
+import App.Commands
 import App.Data
 import App.Functions
 import Irc.Write
@@ -26,12 +27,14 @@ motdHandler handle = do
       else do
           motdHandler handle
 
-listen :: Handle -> [String] -> Net ()
+listen :: Handle -> [(String, String)] -> Net ()
 listen handle vars = do
     line <- io (hGetLine handle)
     io $ printf "<- %s\n" line
 
     pongHandler handle line
+
+    commandHandler handle (words line) vars
 
     listen handle vars
 
@@ -41,3 +44,8 @@ pongHandler handle line = do
       then write "PONG" (words line !! 1)
       else return ()
 
+commandHandler :: Handle -> [String] -> [(String, String)] -> Net [(String, String)]
+commandHandler handle (ident:command:chan':message) vars = if (":test" == (unwords message))
+                                                            then test message vars
+                                                            else return $ [("", "")] ++ vars
+commandHandler _ _ vars = return $ [("", "")] ++ vars
