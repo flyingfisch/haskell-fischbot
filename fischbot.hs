@@ -69,5 +69,6 @@ argHandler (arg:[value]) = case arg of "--server" -> (arg, value)
                                        "--nick" -> (arg, value)
                                        "--chan" -> (arg, value)
                                        (_) -> ("", "")
+argHandler (["--help"]) = error "\nUsage: fischbot [OPTIONS]\n\nArguments:\n--server=servername: server (defaults to irc.afternet.org)\n--port=portNumber: port number, defaults to 6667\n--nick=nickname: nickname for fischbot to use, defaults to hFischbot\n--chan=#channel: channel to connect to, remember to supply the pound sign"
 argHandler (_) = ("", "")
 
