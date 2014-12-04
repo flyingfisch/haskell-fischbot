@@ -64,10 +64,10 @@ argsHandler :: [String] -> [(String, String)]
 argsHandler args = map (argHandler . splitOn "=") args
 
 argHandler :: [String] -> (String, String)
-argHandler (arg:[value]) = case arg of "server" -> (arg, value)
-                                       "port" -> (arg, value)
-                                       "nick" -> (arg, value)
-                                       "chan" -> (arg, value)
+argHandler (arg:[value]) = case arg of "--server" -> (arg, value)
+                                       "--port" -> (arg, value)
+                                       "--nick" -> (arg, value)
+                                       "--chan" -> (arg, value)
                                        (_) -> ("", "")
 argHandler (_) = ("", "")
 

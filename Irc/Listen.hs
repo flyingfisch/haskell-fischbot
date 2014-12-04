@@ -30,7 +30,6 @@ listen :: Handle -> Net ()
 listen handle = forever $ do
     line <- io (hGetLine handle)
     io $ printf "<- %s\n" line
-
     pongHandler handle line
 
 pongHandler :: Handle -> String -> Net ()
