@@ -3,6 +3,7 @@ module Irc.Listen
 , motdHandler
 ) where
 
+import Control.Monad
 import Network
 import System.IO
 import Text.Printf
@@ -26,9 +27,11 @@ motdHandler handle = do
           motdHandler handle
 
 listen :: Handle -> Net ()
-listen handle = do
-    line <- io (hGetContents handle)
+listen handle = forever $ do
+    line <- io (hGetLine handle)
     io $ printf "<- %s\n" line
+
+    pongHandler handle line
 
 pongHandler :: Handle -> String -> Net ()
 pongHandler handle line = do
