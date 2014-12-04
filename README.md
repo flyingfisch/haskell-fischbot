@@ -15,7 +15,7 @@ $ ./fischbot
 ~~~
 
 Join `#fischbot` on `irc.afternet.org` and you should see the bot
-running happily. Try running `fischbot --help` for information on
+running happily. Try running `./fischbot --help` for information on
 getting it to join other networks and channels.
 
 
