@@ -28,7 +28,7 @@ motdHandler handle = do
 listen :: Handle -> Net ()
 listen handle = do
     line <- io (hGetContents handle)
-    io $ putStrLn line
+    io $ printf "<- %s\n" line
 
 pongHandler :: Handle -> String -> Net ()
 pongHandler handle line = do

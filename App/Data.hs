@@ -8,5 +8,11 @@ import Network
 import System.IO
 
 type Net = ReaderT Bot IO
-data Bot = Bot { socket :: Handle }
+data Bot = Bot {
+    socket :: Handle,
+    server :: String,
+    port :: String,
+    chan :: String,
+    nick :: String
+}
 
