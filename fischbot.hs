@@ -8,8 +8,7 @@ import System.IO
 import System.Environment
 import Text.Printf
 
-type Net = ReaderT Bot IO
-data Bot = Bot { socket :: Handle }
+import App.Data
 
 server = "irc.afternet.org"
 port = 6667
@@ -26,7 +25,7 @@ connect :: IO Bot
 connect = do
     handle <- connectTo server (PortNumber (fromIntegral port))
     hSetBuffering handle NoBuffering
-    return (Bot handle)
+    return $ Bot handle
 
 run :: Net ()
 run = do
