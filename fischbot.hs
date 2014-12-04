@@ -28,7 +28,7 @@ connect = do
     let server = fromMaybe "irc.afternet.org" (lookup "server" (argList))
     let port = fromMaybe "6667" (lookup "port" (argList))
     let chan = fromMaybe "#fischbot" (lookup "chan" (argList))
-    let nick = fromMaybe "hFischbot" (lookup "chan" (argList))
+    let nick = fromMaybe "hFischbot" (lookup "nick" (argList))
 
     -- open a socket
     handle <- connectTo server (PortNumber (fromIntegral (read port)))
@@ -66,6 +66,8 @@ argsHandler args = map (argHandler . splitOn "=") args
 argHandler :: [String] -> (String, String)
 argHandler (arg:[value]) = case arg of "server" -> (arg, value)
                                        "port" -> (arg, value)
+                                       "nick" -> (arg, value)
+                                       "chan" -> (arg, value)
                                        (_) -> ("", "")
 argHandler (_) = ("", "")
 
