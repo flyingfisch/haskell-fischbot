@@ -4,7 +4,6 @@ import Control.Monad.Reader
 import Network
 import System.IO
 import System.Environment
-import Text.Printf
 
 import App.Data
 import App.Functions
