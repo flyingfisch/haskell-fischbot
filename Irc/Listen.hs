@@ -26,11 +26,14 @@ motdHandler handle = do
       else do
           motdHandler handle
 
-listen :: Handle -> Net ()
-listen handle = forever $ do
+listen :: Handle -> [String] -> Net ()
+listen handle vars = do
     line <- io (hGetLine handle)
     io $ printf "<- %s\n" line
+
     pongHandler handle line
+
+    listen handle vars
 
 pongHandler :: Handle -> String -> Net ()
 pongHandler handle line = do

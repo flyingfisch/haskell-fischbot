@@ -15,27 +15,33 @@ import Irc.Listen
 
 
 main :: IO ()
-main = bracket connect disconnect loop
+main = do
+    -- take care of the command line args first
+    args <- getArgs
+    let argList = argsHandler args
+    let server = fromMaybe "irc.afternet.org" (lookup "--server" (argList))
+    let port = fromMaybe "6667" (lookup "--port" (argList))
+    let chan = fromMaybe "#fischbot" (lookup "--chan" (argList))
+    let nick = fromMaybe "hFischbot" (lookup "--nick" (argList))
+    let helpFlag = fromMaybe "notset" (lookup "--help" (argList))
+
+    if helpFlag == "notset"
+      then bracket (connect server port chan nick) disconnect loop
+      else help
+
     where
     disconnect = hClose . socket
     loop globals = runReaderT run globals
 
-connect :: IO Bot
-connect = do
-    -- take care of the command line args first
-    args <- getArgs
-    let argList = argsHandler args
-    let server = fromMaybe "irc.afternet.org" (lookup "server" (argList))
-    let port = fromMaybe "6667" (lookup "port" (argList))
-    let chan = fromMaybe "#fischbot" (lookup "chan" (argList))
-    let nick = fromMaybe "hFischbot" (lookup "nick" (argList))
-
+connect :: String -> String -> String -> String -> IO Bot
+connect server port chan nick = do
     -- open a socket
     handle <- connectTo server (PortNumber (fromIntegral (read port)))
     hSetBuffering handle NoBuffering
 
     -- return the Bot class with our handle so other functions can use it
     return $ Bot handle server port chan nick
+
 
 run :: Net ()
 run = do
@@ -55,7 +61,8 @@ run = do
     write "JOIN" chan
 
     -- listen, and remember we still need to send that handle!
-    asks socket >>= listen
+    handle <- asks socket
+    listen handle [""]
 
     -- make the result Net ()
     return ()
@@ -69,6 +76,8 @@ argHandler (arg:[value]) = case arg of "--server" -> (arg, value)
                                        "--nick" -> (arg, value)
                                        "--chan" -> (arg, value)
                                        (_) -> ("", "")
-argHandler (["--help"]) = error "\nUsage: fischbot [OPTIONS]\n\nArguments:\n--server=servername: server (defaults to irc.afternet.org)\n--port=portNumber: port number, defaults to 6667\n--nick=nickname: nickname for fischbot to use, defaults to hFischbot\n--chan=#channel: channel to connect to, remember to supply the pound sign"
+argHandler (["--help"]) = ("--help", "set")
 argHandler (_) = ("", "")
 
+help :: IO ()
+help = putStrLn "Usage: fischbot [OPTIONS]\n\nArguments:\n--server=servername: server (defaults to irc.afternet.org)\n--port=portNumber: port number, defaults to 6667\n--nick=nickname: nickname for fischbot to use, defaults to hFischbot\n--chan=#channel: channel to connect to, remember to supply the pound sign"
