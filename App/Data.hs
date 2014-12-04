@@ -9,3 +9,4 @@ import System.IO
 
 type Net = ReaderT Bot IO
 data Bot = Bot { socket :: Handle }
+

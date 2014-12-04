@@ -9,6 +9,8 @@ import System.Environment
 import Text.Printf
 
 import App.Data
+import App.Functions
+import Irc.Write
 
 server = "irc.afternet.org"
 port = 6667
@@ -64,11 +66,3 @@ pongHandler handle line = do
       then write "PONG" (words line !! 1)
       else return ()
 
-write :: String -> String -> Net ()
-write command arg = do
-    handle <- asks socket
-    io $ hPrintf handle "%s %s\r\n" command arg
-    io $ printf "-> %s %s\n" command arg
-
-io :: IO a -> Net a
-io = liftIO
