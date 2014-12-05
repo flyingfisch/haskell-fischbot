@@ -36,7 +36,7 @@ info _ vars = do
     return $ junkVar vars
 
 infoBugs _ vars = do
-    privmsg $ "You can report bugs at: " ++ gitHubRepo ++ "/issues"
+    privmsg $ "You can report bugs at: " ++ gitHubRepo ++ "issues"
     return $ junkVar vars
 
 infoContrib _ vars = do
