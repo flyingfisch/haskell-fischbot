@@ -7,6 +7,7 @@ import Control.Monad
 import Network
 import System.IO
 import Text.Printf
+import System.Exit
 
 import App.Commands
 import App.Data
@@ -35,6 +36,8 @@ listen handle vars = do
     pongHandler handle line
 
     newVars <- commandHandler handle (words line) vars
+    let _quit = getVar "unset" "_quit" newVars
+    if _quit == "set" then io $ exitWith ExitSuccess else return ()
 
     listen handle newVars
 
@@ -45,7 +48,7 @@ pongHandler handle line = do
       else return ()
 
 commandHandler :: Handle -> [String] -> [(String, String)] -> Net [(String, String)]
-commandHandler handle (ident:irccmd:chan':command:message) vars =
-    case (lookup command commandList) of (Just action) -> action (unwords message) vars
+commandHandler handle (ident:irccmd:from:command:message) vars =
+    case (lookup command commandList) of (Just action) -> action (unwords ([ident,irccmd,from])) (unwords message) vars
                                          (_) -> return $ junkVar vars
 commandHandler _ _ vars = return $ junkVar vars
