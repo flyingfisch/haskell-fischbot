@@ -19,11 +19,18 @@ running happily. Try running `./fischbot --help` for information on
 getting it to join other networks and channels.
 
 
-Compiling fischbot
-------------------
+Compiling fischbot from source
+------------------------------
+
+### System Requirements
+
+If you want to compile from source you will need [Haskell platform](https://www.haskell.org/platform/).
+
+### Compiling
 
 If you want to compile from the source you can do so by running the
 following in the directory you cloned fischbot
+
 
 ~~~
 $ ghc --make fischbot
