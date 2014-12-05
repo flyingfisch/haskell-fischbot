@@ -14,7 +14,10 @@ import Irc.Write
 commandList :: [(String, (String -> [(String, String)] -> Net [(String, String)]) )]
 commandList = [
     (":!credits", credits),
+    (":!help", help),
     (":!info", info),
+    (":!info-bugs", infoBugs),
+    (":!info-contrib", infoContrib),
     (":test", test),
     (":!slap", slap),
     (":!say", say)
@@ -24,8 +27,20 @@ credits _ vars = do
     privmsg creditText
     return $ junkVar vars
 
+help _ vars = do
+    privmsg helpText
+    return $ junkVar vars
+
 info _ vars = do
     privmsg infoText
+    return $ junkVar vars
+
+infoBugs _ vars = do
+    privmsg $ "You can report bugs at: " ++ gitHubRepo ++ "/issues"
+    return $ junkVar vars
+
+infoContrib _ vars = do
+    privmsg $ "Know Haskell? Fork me! " ++ gitHubRepo
     return $ junkVar vars
 
 test _ vars = do

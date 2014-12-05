@@ -13,5 +13,7 @@ data Bot = Bot {
     nick :: String
 }
 
-infoText = "Hello, I am hFischbot. That is just the same as the other fischbot you all know and love, except in Haskelly goodness. More information can be obtained through !help, credits can be obtained with !credits"
 creditText = "Made with a keyboard by flyingfisch"
+gitHubRepo = "https://github.com/flyingfisch/haskell-fischbot/"
+helpText = "!credits, !help, !info, !info-bugs, !info-contrib, !slap <name>, !say <message>"
+infoText = "Hello, I am hFischbot. That is just the same as the other fischbot you all know and love, except in Haskelly goodness. More information can be obtained through !help, credits can be obtained with !credits"
