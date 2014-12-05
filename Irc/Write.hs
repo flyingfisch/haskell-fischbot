@@ -17,8 +17,11 @@ write command arg = do
     io $ hPrintf handle "%s %s\r\n" command arg
     io $ printf "-> %s %s\n" command arg
 
-privmsg :: String -> String -> Net ()
-privmsg chan message = write "PRIVMSG" (chan ++ " :" ++ message)
+privmsg :: String -> Net ()
+privmsg message = do
+    chan' <- asks chan
+    write "PRIVMSG" (chan' ++ " :" ++ message)
 
-action :: String -> String -> Net ()
-action chan message = privmsg chan ("\SOHACTION " ++ message ++ "\SOH")
+action :: String -> Net ()
+action message = privmsg ("\SOHACTION " ++ message ++ "\SOH")
+
