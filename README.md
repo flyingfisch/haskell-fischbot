@@ -1,7 +1,15 @@
 haskell-fischbot
 ================
 
-Fischbot ported to Haskell
+[python-fischbot](//github.com/flyingfisch/python-fischbot) ported to Haskell.
+
+Important files
+---------------
+
+* `./config/admins.txt`: Contains idents of all users with access to
+  fischbot's restricted commands. To add or remove administrators from
+  this list use the `!add-admin <ident>` and `!remove-admin <ident>`
+  commands in the IRC channel.
 
 Running fischbot
 ----------------
