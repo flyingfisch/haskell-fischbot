@@ -40,7 +40,7 @@ connect server port chan nick = do
     hSetBuffering handle NoBuffering
 
     -- return the Bot class with our handle so other functions can use it
-    return $ Bot handle server port chan nick ["flyingfisch"]
+    return $ Bot handle server port chan nick
 
 
 run :: Net ()

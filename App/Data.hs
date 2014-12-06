@@ -10,8 +10,7 @@ data Bot = Bot {
     server :: String,
     port :: String,
     chan :: String,
-    nick :: String,
-    admins :: [String]
+    nick :: String
 }
 
 creditText = "Made with a keyboard by flyingfisch"

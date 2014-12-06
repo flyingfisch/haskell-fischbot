@@ -4,6 +4,7 @@ module App.Commands
 
 import Control.Monad
 import Control.Monad.Reader
+import Data.List
 import Data.List.Split
 import Data.Maybe
 
@@ -14,6 +15,9 @@ import Irc.Write
 -- functions are of type: f identAndStuff message vars
 commandList :: [(String, (String -> String -> [(String, String)] -> Net [(String, String)]) )]
 commandList = [
+    (":!add-admin", addAdmin),
+    (":!remove-admin", removeAdmin),
+    (":!admins", admins),
     (":!credits", credits),
     (":!help", help),
     (":!info", info),
@@ -24,6 +28,42 @@ commandList = [
     (":!say", say),
     (":!quit", quit)
     ]
+
+addAdmin identline argument vars = do
+    let (ident:_) = words argument
+        username = extractUsername identline
+
+    r <- isAdmin "./config/admins.txt" username
+
+    if r
+      then do
+          appendAdmin "./config/admins.txt" ident
+          privmsg ("Successfully removed " ++ ident ++ " to admin list")
+      else
+          privmsg $ "Just what do you think you are doing, " ++ (splitOn "@" username !! 0) ++ "?"
+
+    return $ junkVar vars
+
+removeAdmin identline argument vars = do
+    let (ident:_) = words argument
+        username = extractUsername identline
+
+    r <- isAdmin "./config/admins.txt" username
+
+    if r
+      then do
+          deleteAdmin "./config/admins.txt" ident
+          privmsg ("Successfully added " ++ ident ++ " to admin list")
+      else
+          privmsg $ "Just what do you think you are doing, " ++ (splitOn "@" username !! 0) ++ "?"
+
+    return $ junkVar vars
+
+admins _ _ vars = do
+    admins <- getAdmins "./config/admins.txt"
+    let admins' = intercalate ", " admins
+    privmsg admins'
+    return $ junkVar vars
 
 credits _ _ vars = do
     privmsg creditText
@@ -62,15 +102,15 @@ say _ message vars = do
     return $ junkVar vars
 
 quit identline message vars = do
-    admins <- asks admins
-    let (_:username) = head $ splitOn "!" identline
+    let username = extractUsername identline
 
-    if (username `elem` admins)
+    r <- isAdmin "./config/admins.txt" username
+
+    if r
       then do
           write "QUIT" ":My arm is tired, no more PING PONG"
           return $ updateVar "_quit" "set" vars
       else do
-          privmsg (username ++ ": HOW DARE YOU TRY TO TURN ME OFF!")
+          privmsg ((splitOn "@" username !! 0) ++ ": HOW DARE YOU TRY TO TURN ME OFF!")
           return $ junkVar vars
-
 
