@@ -38,7 +38,7 @@ addAdmin identline argument vars = do
     if r
       then do
           appendAdmin "./config/admins.txt" ident
-          privmsg ("Successfully removed " ++ ident ++ " to admin list")
+          privmsg ("Successfully added " ++ ident ++ " to admin list")
       else
           privmsg $ "Just what do you think you are doing, " ++ (splitOn "@" username !! 0) ++ "?"
 
@@ -53,7 +53,7 @@ removeAdmin identline argument vars = do
     if r
       then do
           deleteAdmin "./config/admins.txt" ident
-          privmsg ("Successfully added " ++ ident ++ " to admin list")
+          privmsg ("Successfully removed " ++ ident ++ " from admin list")
       else
           privmsg $ "Just what do you think you are doing, " ++ (splitOn "@" username !! 0) ++ "?"
 
