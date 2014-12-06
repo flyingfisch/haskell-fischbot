@@ -71,6 +71,7 @@ credits _ _ vars = do
 
 help _ _ vars = do
     privmsg helpText
+    privmsg helpText2
     return $ junkVar vars
 
 info _ _ vars = do

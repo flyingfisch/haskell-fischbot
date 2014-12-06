@@ -3,11 +3,13 @@ module Irc.Listen
 , motdHandler
 ) where
 
+import Data.List.Split
 import Control.Monad
+import Control.Monad.Reader
 import Network
+import System.Exit
 import System.IO
 import Text.Printf
-import System.Exit
 
 import App.Commands
 import App.Data
@@ -51,4 +53,13 @@ commandHandler :: Handle -> [String] -> [(String, String)] -> Net [(String, Stri
 commandHandler handle (ident:irccmd:from:(_:command):message) vars =
     case (lookup command commandList) of (Just action) -> action (unwords ([ident,irccmd,from])) (unwords message) vars
                                          (_) -> return $ junkVar vars
+
+commandHandler handle ((_:ident):"JOIN":xs) vars = do
+    adminFile <- asks adminFn
+    chan <- asks chan
+    r <- isAdmin adminFile (extractUsername ident)
+
+    if r then write "MODE" (chan ++ " +o " ++ (head $ splitOn "!" ident)) else privmsg "oh, its you again."
+    return $ junkVar vars
+
 commandHandler _ _ vars = return $ junkVar vars
