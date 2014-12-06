@@ -59,7 +59,7 @@ commandHandler handle ((_:ident):"JOIN":xs) vars = do
     chan <- asks chan
     r <- isAdmin adminFile (extractUsername ident)
 
-    if r then write "MODE" (chan ++ " +o " ++ (head $ splitOn "!" ident)) else privmsg "oh, its you again."
+    if r then write "MODE" (chan ++ " +o " ++ (head $ splitOn "!" ident)) else return ()
     return $ junkVar vars
 
 commandHandler _ _ vars = return $ junkVar vars
