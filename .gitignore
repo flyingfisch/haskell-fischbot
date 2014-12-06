@@ -15,4 +15,4 @@ cabal.config
 *.prof
 *.aux
 *.hp
-./config/admins.txt
+*/admins.txt
