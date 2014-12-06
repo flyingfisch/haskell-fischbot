@@ -15,18 +15,18 @@ import Irc.Write
 -- functions are of type: f identAndStuff message vars
 commandList :: [(String, (String -> String -> [(String, String)] -> Net [(String, String)]) )]
 commandList = [
-    (":!add-admin", addAdmin),
-    (":!remove-admin", removeAdmin),
-    (":!admins", admins),
-    (":!credits", credits),
-    (":!help", help),
-    (":!info", info),
-    (":!info-bugs", infoBugs),
-    (":!info-contrib", infoContrib),
-    (":test", test),
-    (":!slap", slap),
-    (":!say", say),
-    (":!quit", quit)
+    ("!add-admin", addAdmin),
+    ("!remove-admin", removeAdmin),
+    ("!admins", admins),
+    ("!credits", credits),
+    ("!help", help),
+    ("!info", info),
+    ("!info-bugs", infoBugs),
+    ("!info-contrib", infoContrib),
+    ("test", test),
+    ("!slap", slap),
+    ("!say", say),
+    ("!quit", quit)
     ]
 
 addAdmin identline argument vars = do

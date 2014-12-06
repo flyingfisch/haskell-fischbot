@@ -48,7 +48,7 @@ pongHandler handle line = do
       else return ()
 
 commandHandler :: Handle -> [String] -> [(String, String)] -> Net [(String, String)]
-commandHandler handle (ident:irccmd:from:command:message) vars =
+commandHandler handle (ident:irccmd:from:(_:command):message) vars =
     case (lookup command commandList) of (Just action) -> action (unwords ([ident,irccmd,from])) (unwords message) vars
                                          (_) -> return $ junkVar vars
 commandHandler _ _ vars = return $ junkVar vars
