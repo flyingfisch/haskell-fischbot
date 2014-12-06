@@ -23,6 +23,7 @@ commandList = [
     ("!info", info),
     ("!info-bugs", infoBugs),
     ("!info-contrib", infoContrib),
+    ("!intro", intro),
     ("test", test),
     ("!slap", slap),
     ("!say", say),
@@ -87,6 +88,14 @@ infoBugs _ _ vars = do
 
 infoContrib _ _ vars = do
     privmsg $ "Know Haskell? Fork me! " ++ gitHubRepo
+    return $ junkVar vars
+
+intro _ ("") vars = do
+    privmsg "AAAAAAAAAAAAAAAAAAAH!!! YOU DIDN'T TELL ME WHO TO INTRODUCE!!!!"
+    action "screams and yells and faints."
+    return $ junkVar vars
+intro _ name vars = do
+    privmsg $ name ++ ", you should introduce yourself: http://community.casiocalc.org/topic/5677-introduce-yourself"
     return $ junkVar vars
 
 test _ _ vars = do
