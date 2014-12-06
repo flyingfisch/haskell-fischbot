@@ -30,14 +30,15 @@ commandList = [
     ]
 
 addAdmin identline argument vars = do
+    adminFile <- asks adminFn
     let (ident:_) = words argument
         username = extractUsername identline
 
-    r <- isAdmin "./config/admins.txt" username
+    r <- isAdmin adminFile username
 
     if r
       then do
-          appendAdmin "./config/admins.txt" ident
+          appendAdmin adminFile ident
           privmsg ("Successfully added " ++ ident ++ " to admin list")
       else
           privmsg $ "Just what do you think you are doing, " ++ (splitOn "@" username !! 0) ++ "?"
@@ -45,10 +46,11 @@ addAdmin identline argument vars = do
     return $ junkVar vars
 
 removeAdmin identline argument vars = do
+    adminFile <- asks adminFn
     let (ident:_) = words argument
         username = extractUsername identline
 
-    r <- isAdmin "./config/admins.txt" username
+    r <- isAdmin adminFile username
 
     if r
       then do
@@ -60,7 +62,8 @@ removeAdmin identline argument vars = do
     return $ junkVar vars
 
 admins _ _ vars = do
-    admins <- getAdmins "./config/admins.txt"
+    adminFile <- asks adminFn
+    admins <- getAdmins adminFile
     let admins' = intercalate ", " admins
     privmsg admins'
     return $ junkVar vars
@@ -103,9 +106,10 @@ say _ message vars = do
     return $ junkVar vars
 
 quit identline message vars = do
+    adminFile <- asks adminFn
     let username = extractUsername identline
 
-    r <- isAdmin "./config/admins.txt" username
+    r <- isAdmin adminFile username
 
     if r
       then do

@@ -13,6 +13,8 @@ import App.Functions
 import Irc.Write
 import Irc.Listen
 
+versionString = "0.1 beta"
+adminFile = "./config/admins.txt"
 
 main :: IO ()
 main = do
@@ -40,7 +42,7 @@ connect server port chan nick = do
     hSetBuffering handle NoBuffering
 
     -- return the Bot class with our handle so other functions can use it
-    return $ Bot handle server port chan nick "./config/admins.txt"
+    return $ Bot handle server port chan nick adminFile versionString
 
 
 run :: Net ()

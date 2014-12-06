@@ -11,7 +11,8 @@ data Bot = Bot {
     port :: String,
     chan :: String,
     nick :: String,
-    adminFn :: String
+    adminFn :: String,
+    version :: String
 }
 
 creditText = "Made with a keyboard by flyingfisch"
