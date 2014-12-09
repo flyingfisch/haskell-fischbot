@@ -29,6 +29,7 @@ commandList = [
     ("!say", say),
     ("test", test),
     ("!uptime", uptime),
+    ("!version", version'),
     ("!quit", quit)
     ]
 
@@ -121,6 +122,11 @@ uptime _ message vars = do
     zero <- asks startTime
     let raw = diffClockTimes now zero
     privmsg $ timeDiffToString $ raw
+    return $ junkVar vars
+
+version' _ _ vars = do
+    v <- asks version
+    privmsg v
     return $ junkVar vars
 
 quit identline message vars = do
