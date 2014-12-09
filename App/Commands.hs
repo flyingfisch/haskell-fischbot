@@ -7,6 +7,7 @@ import Control.Monad.Reader
 import Data.List
 import Data.List.Split
 import Data.Maybe
+import System.Time
 
 import App.Data
 import App.Functions
@@ -24,9 +25,10 @@ commandList = [
     ("!info-bugs", infoBugs),
     ("!info-contrib", infoContrib),
     ("!intro", intro),
-    ("test", test),
     ("!slap", slap),
     ("!say", say),
+    ("test", test),
+    ("!uptime", uptime),
     ("!quit", quit)
     ]
 
@@ -112,6 +114,13 @@ slap _ name vars = do
 
 say _ message vars = do
     privmsg message
+    return $ junkVar vars
+
+uptime _ message vars = do
+    now <- io getClockTime
+    zero <- asks startTime
+    let raw = diffClockTimes now zero
+    privmsg $ timeDiffToString $ raw
     return $ junkVar vars
 
 quit identline message vars = do

@@ -3,6 +3,7 @@ module App.Data where
 import Control.Monad.Reader
 import Network
 import System.IO
+import System.Time
 
 type Net = ReaderT Bot IO
 data Bot = Bot {
@@ -12,7 +13,8 @@ data Bot = Bot {
     chan :: String,
     nick :: String,
     adminFn :: String,
-    version :: String
+    version :: String,
+    startTime :: ClockTime
 }
 
 creditText = "Made with a keyboard by flyingfisch"

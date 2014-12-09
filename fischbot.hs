@@ -7,6 +7,7 @@ import Data.Maybe
 import Network
 import System.IO
 import System.Environment
+import System.Time
 
 import App.Data
 import App.Functions
@@ -41,8 +42,10 @@ connect server port chan nick = do
     handle <- connectTo server (PortNumber (fromIntegral (read port)))
     hSetBuffering handle NoBuffering
 
+    start <- getClockTime
+
     -- return the Bot class with our handle so other functions can use it
-    return $ Bot handle server port chan nick adminFile versionString
+    return $ Bot handle server port chan nick adminFile versionString start
 
 
 run :: Net ()
