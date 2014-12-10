@@ -162,8 +162,15 @@ tell ident line vars = do
 uptime _ message vars = do
     now <- io getClockTime
     zero <- asks startTime
-    let raw = diffClockTimes now zero
-    privmsg $ timeDiffToString $ raw
+    let raw = normalizeTimeDiff $ diffClockTimes now zero
+        s = show $ tdSec raw
+        m = show $ tdMin raw
+        h = show $ tdHour raw
+        d = show $ tdDay raw
+        mo = show $ tdMonth raw
+        y = show $ tdYear raw
+
+    privmsg $ "Uptime: " ++ y ++ " years, " ++ mo ++ " months, " ++ d ++ " days, " ++ h ++ " hours, " ++ m ++ " minutes, and " ++ s ++ " seconds."
     return $ junkVar vars
 
 version' _ _ vars = do
