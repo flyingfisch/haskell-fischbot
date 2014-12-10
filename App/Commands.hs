@@ -1,5 +1,6 @@
 module App.Commands
 ( commandList
+, ret
 ) where
 
 import Control.Monad
