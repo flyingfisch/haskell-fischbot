@@ -59,17 +59,22 @@ appendAdmin fileName username = io $ do
     removeFile fileName
     renameFile tempName fileName
 
-deleteAdmin :: String -> String -> Net ()
+deleteAdmin :: String -> String -> Net Bool
 deleteAdmin fileName username = io $ do
     handle <- openFile fileName ReadMode
     (tempName, tempHandle) <- openTempFile "." "temp"
     contents <- hGetContents handle
     let newContents = [x | x <- (lines contents), x /= username]
-    hPutStr tempHandle (unlines newContents)
-    hClose handle
-    hClose tempHandle
-    removeFile fileName
-    renameFile tempName fileName
+
+    if (unlines newContents) == contents
+      then return False
+      else do
+          hPutStr tempHandle (unlines newContents)
+          hClose handle
+          hClose tempHandle
+          removeFile fileName
+          renameFile tempName fileName
+          return True
 
 extractUsername :: String -> String
 extractUsername identline = splitOn "!" ((words identline) !! 0) !! 1

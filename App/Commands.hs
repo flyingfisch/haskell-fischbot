@@ -62,8 +62,8 @@ removeAdmin identline argument vars = do
 
     if r
       then do
-          deleteAdmin "./config/admins.txt" ident
-          privmsg ("Successfully removed " ++ ident ++ " from admin list")
+          success <- deleteAdmin "./config/admins.txt" ident
+          if success then privmsg ("Successfully removed " ++ ident ++ " from admin list") else privmsg $ ident ++ " was not found in admin list."
       else
           privmsg $ "Just what do you think you are doing, " ++ (splitOn "@" username !! 0) ++ "?"
 
