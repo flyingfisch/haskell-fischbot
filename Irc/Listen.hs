@@ -64,7 +64,7 @@ commandHandler handle ((_:ident):"JOIN":xs) vars = do
     fischbotnick <- asks nick
     if (head $ splitOn "!" ident) /= fischbotnick
       then
-        ret (":" ++ ident) chan vars
+        returnMessages (":" ++ ident) True vars
       else
         return $ junkVar vars
 

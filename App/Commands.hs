@@ -1,6 +1,6 @@
 module App.Commands
 ( commandList
-, ret
+, returnMessages
 ) where
 
 import Control.Monad
@@ -105,22 +105,7 @@ intro _ name vars = do
     privmsg $ name ++ ", you should introduce yourself: http://community.casiocalc.org/topic/5677-introduce-yourself"
     return $ junkVar vars
 
-ret ident _ vars = do
-    let queue = read (getVar "[(\"\",\"\")]" "messages" vars) :: [(String, String)]
-        (_:receiver) = head $ splitOn "!" ident
-        messages = [x | (y,x) <- queue, y == receiver]
-
-    if messages /= []
-      then do
-          privmsg $ receiver ++ ", here are some messages that were sent to you while you were offline:"
-          mapM_ privmsg messages
-          let newQueue = [(y,x) | (y,x) <- queue, y /= receiver]
-          return $ updateVar "messages" (show newQueue) vars
-      else do
-          privmsg $ receiver ++ ": Sorry, couldn't find any messages for you."
-          return $ junkVar vars
-
-
+ret ident _ vars = returnMessages ident False vars
 
 slap _ ("") vars = do
     privmsg "slap who?"
@@ -190,5 +175,21 @@ quit identline message vars = do
           return $ updateVar "_quit" "set" vars
       else do
           privmsg ((splitOn "@" username !! 0) ++ ": HOW DARE YOU TRY TO TURN ME OFF!")
+          return $ junkVar vars
+
+returnMessages :: String -> Bool -> [(String, String)] -> Net [(String, String)]
+returnMessages ident quiet vars = do
+    let queue = read (getVar "[(\"\",\"\")]" "messages" vars) :: [(String, String)]
+        (_:receiver) = head $ splitOn "!" ident
+        messages = [x | (y,x) <- queue, y == receiver]
+
+    if messages /= []
+      then do
+          privmsg $ receiver ++ ", here are some messages that were sent to you while you were offline:"
+          mapM_ privmsg messages
+          let newQueue = [(y,x) | (y,x) <- queue, y /= receiver]
+          return $ updateVar "messages" (show newQueue) vars
+      else if quiet then return $ junkVar vars else do
+          privmsg $ receiver ++ ": Sorry, couldn't find any messages for you."
           return $ junkVar vars
 
