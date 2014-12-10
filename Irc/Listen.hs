@@ -60,6 +60,13 @@ commandHandler handle ((_:ident):"JOIN":xs) vars = do
     r <- isAdmin adminFile (extractUsername ident)
 
     if r then write "MODE" (chan ++ " +o " ++ (head $ splitOn "!" ident)) else return ()
-    ret (":" ++ ident) chan vars
+    -- return messages
+    fischbotnick <- asks nick
+    if (head $ splitOn "!" ident) /= fischbotnick
+      then
+        ret (":" ++ ident) chan vars
+      else
+        return $ junkVar vars
+
 
 commandHandler _ _ vars = return $ junkVar vars
