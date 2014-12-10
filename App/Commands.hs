@@ -25,11 +25,14 @@ commandList = [
     ("!info-bugs", infoBugs),
     ("!info-contrib", infoContrib),
     ("!intro", intro),
+    ("!ret", ret),
     ("!slap", slap),
     ("!say", say),
+    ("!tell", tell),
     ("test", test),
     ("!uptime", uptime),
     ("!version", version'),
+    ("!vars", showVars),
     ("!quit", quit)
     ]
 
@@ -101,10 +104,22 @@ intro _ name vars = do
     privmsg $ name ++ ", you should introduce yourself: http://community.casiocalc.org/topic/5677-introduce-yourself"
     return $ junkVar vars
 
-test _ _ vars = do
-    let num = getVar "0" "test" vars
-    privmsg ("Test Received " ++ num)
-    return $ updateVar "test" (show ((read num) + 1)) vars
+ret ident _ vars = do
+    let queue = read (getVar "[(\"\",\"\")]" "messages" vars) :: [(String, String)]
+        (_:receiver) = head $ splitOn "!" ident
+        messages = [x | (y,x) <- queue, y == receiver]
+
+    if messages /= []
+      then do
+          privmsg $ receiver ++ ", here are some messages that were sent to you while you were offline:"
+          mapM_ privmsg messages
+          let newQueue = [(y,x) | (y,x) <- queue, y /= receiver]
+          return $ updateVar "messages" (show newQueue) vars
+      else do
+          privmsg $ receiver ++ ": Sorry, couldn't find any messages for you."
+          return $ junkVar vars
+
+
 
 slap _ ("") vars = do
     privmsg "slap who?"
@@ -116,6 +131,32 @@ slap _ name vars = do
 say _ message vars = do
     privmsg message
     return $ junkVar vars
+
+showVars _ _ vars = do
+    privmsg $ show vars
+    return $ junkVar vars
+
+test _ _ vars = do
+    let num = getVar "0" "test" vars
+    privmsg ("Test Received " ++ num)
+    return $ updateVar "test" (show ((read num) + 1)) vars
+
+tell ident line vars = do
+    if (length $ words line) > 1
+      then do
+          let (_:sender) = head (splitOn "!" ident)
+              (sendTo:message) = words line
+              queue = read (getVar "[(\"\",\"\")]" "messages" vars) :: [(String, String)]
+
+          privmsg $ sender ++ ": OK, I'll let " ++ sendTo ++ " know about that when he gets back."
+
+          let messageTuple = (sendTo, "From " ++ sender ++ ": " ++ (unwords message))
+              newQueue = messageTuple:queue
+
+          return $ updateVar "messages" (show newQueue) vars
+      else do
+          privmsg "Umm, don't you want me to tell him anything?"
+          return $ junkVar vars
 
 uptime _ message vars = do
     now <- io getClockTime
