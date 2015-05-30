@@ -124,7 +124,8 @@ showVars _ _ vars = do
 
 test _ _ vars = do
     let num = getVar "0" "test" vars
-    privmsg ("Test Received " ++ num)
+    --privmsg ("Test Received " ++ num)
+    privmsg ("Test Received")
     return $ updateVar "test" (show ((read num) + 1)) vars
 
 tell ident line vars = do
